@@ -27,11 +27,28 @@ Project នេះគឺជា Full Stack Application ដែលមាន 3 Applic
 ### Project Structure
 
 ```
-my-fullstack-app
+Full-Clothing-Store-app
 │
-├── backend-api (NestJS)
-├── admin-panel (Next.js)
-├── frontend-user (Next.js)
+├── backend-api (NestJS API)
+│   ├── src/
+│   │   ├── modules/ (auth, users, products, etc.)
+│   │   ├── common/ (guards, decorators, filters)
+│   │   └── database/ (prisma service)
+│   └── prisma/ (schema & migrations)
+│
+├── admin-panel (Next.js Dashboard)
+│   ├── src/
+│   │   ├── app/ (dashboard pages)
+│   │   ├── components/ (ui, tables, forms)
+│   │   └── services/ (api calls)
+│   └── public/
+│
+└── frontend-user (Next.js Customer App)
+    ├── src/
+    │   ├── app/ (shop, cart, checkout pages)
+    │   ├── components/ (product cards, layout)
+    │   └── services/ (api calls)
+    └── public/
 ```
 
 ---
