@@ -1,0 +1,862 @@
+============================================================
+FULL STACK PROJECT GUIDE
+NestJS + Next.js + Prisma E-commerce Architecture
+WITH PROJECT COMMANDS (CMD)
+============================================================
+
+1. INTRODUCTION
+------------------------------------------------------------
+
+ឯកសារនេះបង្កើតឡើងសម្រាប់ពន្យល់អំពីការរៀបចំ Full Stack Project
+មួយដែលប្រើប្រាស់បច្ចេកវិទ្យា៖
+
+- Backend: NestJS
+- Admin Panel: Next.js
+- Frontend User: Next.js
+- ORM: Prisma
+- Database: PostgreSQL
+
+Project នេះសមស្របសម្រាប់ E-commerce Store ជាពិសេស Clothing Store
+ដែលត្រូវការគ្រប់គ្រង៖
+
+- Users
+- Products
+- Product Variants
+- Categories
+- Cart
+- Orders
+- Payments
+
+------------------------------------------------------------
+2. PROJECT OVERVIEW
+------------------------------------------------------------
+
+Project នេះគឺជា Full Stack Application ដែលមាន 3 Applications សំខាន់ៗ៖
+
+1. backend-api   = NestJS API Server
+2. admin-panel   = Next.js Admin Dashboard
+3. frontend-user = Next.js Customer Website
+
+Project Structure:
+
+my-fullstack-app
+│
+├── backend-api
+├── admin-panel
+├── frontend-user
+└── docs
+
+A. backend-api
+ប្រើសម្រាប់គ្រប់គ្រង Business Logic និង Database Operations ទាំងអស់។
+
+Responsibilities:
+- Authentication
+- User Management
+- Category Management
+- Product Management
+- Product Variant Management
+- Cart Management
+- Order Management
+- Payment Logic
+- File Upload
+- Dashboard Statistics
+
+B. admin-panel
+ប្រើសម្រាប់ Admin ដើម្បីគ្រប់គ្រងទិន្នន័យ។
+
+Responsibilities:
+- Admin Login
+- Manage Products
+- Manage Categories
+- Manage Orders
+- Manage Customers
+- Dashboard Reports
+
+C. frontend-user
+ប្រើសម្រាប់អតិថិជន។
+
+Responsibilities:
+- Browse Products
+- View Product Detail
+- Select Variant
+- Add To Cart
+- Checkout
+- View Order History
+- Manage Profile
+
+------------------------------------------------------------
+3. COMMANDS TO CREATE PROJECT
+------------------------------------------------------------
+
+3.1 CREATE MAIN PROJECT FOLDER
+------------------------------------------------------------
+
+Command:
+
+mkdir my-fullstack-app
+cd my-fullstack-app
+
+3.2 CREATE BACKEND API (NESTJS)
+------------------------------------------------------------
+
+Install NestJS CLI first:
+
+npm install -g @nestjs/cli
+
+Create backend project:
+
+nest new backend-api --package-manager npm
+
+3.3 CREATE ADMIN PANEL (NEXT.JS)
+------------------------------------------------------------
+
+Command:
+
+npx create-next-app@latest admin-panel
+
+Recommended options:
+- TypeScript = Yes
+- ESLint = Yes
+- Tailwind CSS = Yes
+- src/ directory = Yes
+- App Router = Yes
+- Import alias = Yes
+
+3.4 CREATE FRONTEND USER (NEXT.JS)
+------------------------------------------------------------
+
+Command:
+
+npx create-next-app@latest frontend-user
+
+Recommended options:
+- TypeScript = Yes
+- ESLint = Yes
+- Tailwind CSS = Yes
+- src/ directory = Yes
+- App Router = Yes
+- Import alias = Yes
+
+------------------------------------------------------------
+4. COMMANDS TO RUN PROJECTS
+------------------------------------------------------------
+
+Open 3 terminals separately.
+
+4.1 RUN BACKEND
+------------------------------------------------------------
+
+cd backend-api
+npm run start:dev
+
+Default:
+http://localhost:3000
+
+4.2 RUN ADMIN PANEL
+------------------------------------------------------------
+
+cd admin-panel
+npm run dev -- -p 3001
+
+URL:
+http://localhost:3001
+
+4.3 RUN FRONTEND USER
+------------------------------------------------------------
+
+cd frontend-user
+npm run dev -- -p 3002
+
+URL:
+http://localhost:3002
+
+------------------------------------------------------------
+5. SYSTEM WORKFLOW
+------------------------------------------------------------
+
+1. Admin creates Category and Product
+2. Admin adds Product Variants (size, color, stock, price)
+3. Customer browses products on frontend-user
+4. Customer selects product variant
+5. Customer adds product to cart
+6. Customer checks out
+7. System creates order and order items
+8. Admin updates order status
+9. Customer views order history
+
+------------------------------------------------------------
+6. DATABASE DESIGN OVERVIEW
+------------------------------------------------------------
+
+Main Models:
+- User
+- Category
+- Product
+- ProductImage
+- ProductVariant
+- CartItem
+- Order
+- OrderItem
+
+Relationship Summary:
+
+User
+├── CartItem[]
+└── Order[]
+
+Category
+└── Product[]
+
+Product
+├── ProductImage[]
+└── ProductVariant[]
+
+ProductVariant
+├── CartItem[]
+└── OrderItem[]
+
+Order
+└── OrderItem[]
+
+------------------------------------------------------------
+7. MODEL EXPLANATION
+------------------------------------------------------------
+
+7.1 USER MODEL
+------------------------------------------------------------
+
+User table រក្សាទុកព័ត៌មានអ្នកប្រើ។
+
+Fields:
+- id
+- fullName
+- email
+- password
+- phoneNumber
+- address
+- role
+- createdAt
+- updatedAt
+
+Roles:
+- ADMIN
+- CUSTOMER
+
+Relations:
+- User has many Orders
+- User has many CartItems
+
+7.2 CATEGORY MODEL
+------------------------------------------------------------
+
+Category សម្រាប់ចាត់ប្រភេទទំនិញ។
+
+Examples:
+- Men
+- Women
+- Shirt
+- Pants
+
+7.3 PRODUCT MODEL
+------------------------------------------------------------
+
+Product ជាផលិតផលមេ។
+
+Examples:
+- Classic Shirt
+- Denim Jeans
+- Oversize Hoodie
+
+Relations:
+- belongs to Category
+- has many ProductVariants
+- has many ProductImages
+
+7.4 PRODUCT IMAGE MODEL
+------------------------------------------------------------
+
+ProductImage សម្រាប់រក្សាទុក URL រូបភាព។
+
+7.5 PRODUCT VARIANT MODEL
+------------------------------------------------------------
+
+Variant សម្រាប់បំបែក Product តាម:
+- Size
+- Color
+- Stock
+- Price
+
+Examples:
+- Black / M
+- Black / L
+- White / M
+
+Unique constraint:
+productId + size + color
+
+7.6 CART ITEM MODEL
+------------------------------------------------------------
+
+CartItem រក្សាទុកទំនិញនៅក្នុងកន្ត្រករបស់ User។
+
+7.7 ORDER MODEL
+------------------------------------------------------------
+
+Order រក្សាទុកព័ត៌មានសរុបនៃការបញ្ជាទិញ។
+
+Status:
+- PENDING
+- PROCESSING
+- SHIPPED
+- DELIVERED
+- CANCELLED
+
+7.8 ORDER ITEM MODEL
+------------------------------------------------------------
+
+OrderItem រក្សាទុក items នីមួយៗក្នុង Order។
+
+unitPrice គឺ snapshot price នៅពេលទិញ។
+
+------------------------------------------------------------
+8. PRISMA SETUP COMMANDS
+------------------------------------------------------------
+
+Go to backend project:
+
+cd backend-api
+
+Install Prisma:
+
+npm install prisma --save-dev
+npm install @prisma/client
+
+Initialize Prisma:
+
+npx prisma init
+
+This command creates:
+- prisma/schema.prisma
+- .env
+
+------------------------------------------------------------
+9. PRISMA SCHEMA
+------------------------------------------------------------
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  CUSTOMER
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model User {
+  id           Int        @id @default(autoincrement())
+  fullName     String
+  email        String     @unique
+  password     String
+  phoneNumber  String?
+  address      String?
+  role         Role       @default(CUSTOMER)
+  orders       Order[]
+  cartItems    CartItem[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Category {
+  id           Int        @id @default(autoincrement())
+  name         String     @unique
+  description  String?
+  products     Product[]
+}
+
+model Product {
+  id           Int              @id @default(autoincrement())
+  name         String
+  description  String?
+  basePrice    Decimal          @db.Decimal(10, 2)
+  categoryId   Int
+  category     Category         @relation(fields: [categoryId], references: [id])
+  variants     ProductVariant[]
+  images       ProductImage[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+}
+
+model ProductImage {
+  id         Int      @id @default(autoincrement())
+  url        String
+  productId  Int
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model ProductVariant {
+  id            Int         @id @default(autoincrement())
+  productId     Int
+  product       Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  size          String
+  color         String
+  stockQuantity Int         @default(0)
+  price         Decimal?    @db.Decimal(10, 2)
+  cartItems     CartItem[]
+  orderItems    OrderItem[]
+
+  @@unique([productId, size, color])
+}
+
+model CartItem {
+  id         Int            @id @default(autoincrement())
+  userId     Int
+  user       User           @relation(fields: [userId], references: [id])
+  variantId  Int
+  variant    ProductVariant @relation(fields: [variantId], references: [id])
+  quantity   Int
+}
+
+model Order {
+  id              Int          @id @default(autoincrement())
+  userId          Int
+  user            User         @relation(fields: [userId], references: [id])
+  totalAmount     Decimal      @db.Decimal(10, 2)
+  status          OrderStatus  @default(PENDING)
+  paymentMethod   String
+  shippingAddress String
+  contactNumber   String
+  orderItems      OrderItem[]
+  createdAt       DateTime     @default(now())
+}
+
+model OrderItem {
+  id         Int            @id @default(autoincrement())
+  orderId    Int
+  order      Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variantId  Int
+  variant    ProductVariant @relation(fields: [variantId], references: [id])
+  quantity   Int
+  unitPrice  Decimal        @db.Decimal(10, 2)
+}
+
+------------------------------------------------------------
+10. DATABASE ENVIRONMENT CONFIGURATION
+------------------------------------------------------------
+
+In backend-api/.env file:
+
+DATABASE_URL="postgresql://postgres:password@localhost:5432/ecommerce"
+
+Example:
+- postgres = database username
+- password = database password
+- localhost = database host
+- 5432 = PostgreSQL port
+- ecommerce = database name
+
+------------------------------------------------------------
+11. PRISMA MIGRATION COMMANDS
+------------------------------------------------------------
+
+Create migration:
+
+npx prisma migrate dev --name init
+
+Generate Prisma client:
+
+npx prisma generate
+
+Open Prisma Studio:
+
+npx prisma studio
+
+Reset database if needed:
+
+npx prisma migrate reset
+
+------------------------------------------------------------
+12. BACKEND USEFUL PACKAGE COMMANDS
+------------------------------------------------------------
+
+Go to backend-api:
+
+cd backend-api
+
+Install common packages:
+
+npm install @nestjs/config @nestjs/jwt @nestjs/passport passport passport-jwt bcrypt class-validator class-transformer
+
+Install types:
+
+npm install -D @types/passport-jwt @types/bcrypt
+
+If using Swagger:
+
+npm install @nestjs/swagger swagger-ui-express
+
+If using file upload:
+
+npm install @nestjs/platform-express multer
+npm install -D @types/multer
+
+If using Prisma with NestJS:
+No extra package required beyond prisma and @prisma/client.
+
+------------------------------------------------------------
+13. BACKEND STRUCTURE (NESTJS)
+------------------------------------------------------------
+
+backend-api
+│
+├── prisma
+│   ├── schema.prisma
+│   ├── migrations
+│   └── seed.ts
+│
+├── src
+│   ├── main.ts
+│   ├── app.module.ts
+│   │
+│   ├── common
+│   │   ├── decorators
+│   │   ├── guards
+│   │   ├── filters
+│   │   ├── interceptors
+│   │   ├── pipes
+│   │   └── utils
+│   │
+│   ├── config
+│   │   ├── app.config.ts
+│   │   ├── database.config.ts
+│   │   └── jwt.config.ts
+│   │
+│   ├── database
+│   │   ├── prisma.module.ts
+│   │   └── prisma.service.ts
+│   │
+│   └── modules
+│       ├── auth
+│       ├── users
+│       ├── categories
+│       ├── products
+│       ├── cart
+│       ├── orders
+│       ├── payments
+│       ├── uploads
+│       └── dashboard
+
+------------------------------------------------------------
+14. GENERATE NESTJS MODULES COMMANDS
+------------------------------------------------------------
+
+Go to backend-api/src/modules first or run from backend root.
+
+Generate auth module:
+
+nest g module modules/auth
+nest g controller modules/auth
+nest g service modules/auth
+
+Generate users module:
+
+nest g module modules/users
+nest g controller modules/users
+nest g service modules/users
+
+Generate categories module:
+
+nest g module modules/categories
+nest g controller modules/categories
+nest g service modules/categories
+
+Generate products module:
+
+nest g module modules/products
+nest g controller modules/products
+nest g service modules/products
+
+Generate cart module:
+
+nest g module modules/cart
+nest g controller modules/cart
+nest g service modules/cart
+
+Generate orders module:
+
+nest g module modules/orders
+nest g controller modules/orders
+nest g service modules/orders
+
+Generate payments module:
+
+nest g module modules/payments
+nest g controller modules/payments
+nest g service modules/payments
+
+Generate uploads module:
+
+nest g module modules/uploads
+nest g controller modules/uploads
+nest g service modules/uploads
+
+Generate dashboard module:
+
+nest g module modules/dashboard
+nest g controller modules/dashboard
+nest g service modules/dashboard
+
+------------------------------------------------------------
+15. ADMIN PANEL COMMANDS
+------------------------------------------------------------
+
+Go to admin panel:
+
+cd admin-panel
+
+Install useful packages:
+
+npm install axios zustand react-hook-form zod @hookform/resolvers lucide-react
+
+If using table library:
+npm install @tanstack/react-table
+
+If using chart library:
+npm install recharts
+
+Run admin panel:
+npm run dev -- -p 3001
+
+Build admin panel:
+npm run build
+
+------------------------------------------------------------
+16. FRONTEND USER COMMANDS
+------------------------------------------------------------
+
+Go to frontend user:
+
+cd frontend-user
+
+Install useful packages:
+
+npm install axios zustand react-hook-form zod @hookform/resolvers lucide-react
+
+Run frontend user:
+npm run dev -- -p 3002
+
+Build frontend user:
+npm run build
+
+------------------------------------------------------------
+17. ADMIN PANEL STRUCTURE (NEXT.JS)
+------------------------------------------------------------
+
+admin-panel
+│
+├── src
+│   ├── app
+│   │   ├── (auth)
+│   │   │   └── login
+│   │   │
+│   │   ├── (dashboard)
+│   │   │   ├── users
+│   │   │   ├── categories
+│   │   │   ├── products
+│   │   │   ├── orders
+│   │   │   └── settings
+│   │
+│   ├── components
+│   │   ├── layout
+│   │   ├── tables
+│   │   ├── forms
+│   │   └── charts
+│   │
+│   ├── services
+│   │   ├── user.service.ts
+│   │   ├── product.service.ts
+│   │   └── order.service.ts
+│   │
+│   ├── hooks
+│   ├── store
+│   └── types
+
+------------------------------------------------------------
+18. FRONTEND USER STRUCTURE (NEXT.JS)
+------------------------------------------------------------
+
+frontend-user
+│
+├── src
+│   ├── app
+│   │   ├── home
+│   │   ├── shop
+│   │   ├── product
+│   │   ├── cart
+│   │   ├── checkout
+│   │   ├── login
+│   │   └── register
+│   │
+│   ├── components
+│   │   ├── layout
+│   │   ├── product
+│   │   ├── cart
+│   │   └── checkout
+│   │
+│   ├── services
+│   │   ├── product.service.ts
+│   │   ├── cart.service.ts
+│   │   └── order.service.ts
+│   │
+│   ├── hooks
+│   ├── store
+│   └── types
+
+------------------------------------------------------------
+19. API MODULE LIST
+------------------------------------------------------------
+
+Main Backend Modules:
+- Auth
+- Users
+- Categories
+- Products
+- Cart
+- Orders
+- Payments
+- Uploads
+- Dashboard
+
+Example API Endpoints:
+- POST   /auth/login
+- POST   /auth/register
+- GET    /users/profile
+- GET    /categories
+- POST   /categories
+- GET    /products
+- POST   /products
+- GET    /products/:id
+- PATCH  /products/:id
+- DELETE /products/:id
+- GET    /cart
+- POST   /cart
+- PATCH  /cart/:id
+- DELETE /cart/:id
+- POST   /orders
+- GET    /orders
+- GET    /orders/:id
+- PATCH  /orders/:id/status
+
+------------------------------------------------------------
+20. ENVIRONMENT VARIABLES
+------------------------------------------------------------
+
+Backend .env
+
+PORT=3000
+DATABASE_URL="postgresql://postgres:password@localhost:5432/ecommerce"
+JWT_SECRET=supersecret
+JWT_EXPIRE=7d
+
+Admin Panel .env.local
+
+NEXT_PUBLIC_API_URL=http://localhost:3000
+
+Frontend User .env.local
+
+NEXT_PUBLIC_API_URL=http://localhost:3000
+
+------------------------------------------------------------
+21. DEVELOPMENT ORDER
+------------------------------------------------------------
+
+Recommended Development Flow:
+
+1. Create main project folder
+2. Create backend-api
+3. Create admin-panel
+4. Create frontend-user
+5. Install Prisma
+6. Configure database
+7. Write schema
+8. Run migration
+9. Generate Prisma client
+10. Install backend packages
+11. Generate NestJS modules
+12. Build Auth module
+13. Build User module
+14. Build Category module
+15. Build Product module
+16. Build Cart module
+17. Build Order module
+18. Build Payment module
+19. Build Upload module
+20. Build Admin panel pages
+21. Build Frontend user pages
+22. Testing
+23. Production build
+24. Deployment
+
+------------------------------------------------------------
+22. USEFUL EXTRA COMMANDS
+------------------------------------------------------------
+
+Check Node version:
+node -v
+
+Check npm version:
+npm -v
+
+Install all dependencies:
+npm install
+
+Remove node_modules and reinstall:
+rmdir /s /q node_modules
+del package-lock.json
+npm install
+
+Run lint:
+npm run lint
+
+Build project:
+npm run build
+
+------------------------------------------------------------
+23. SUMMARY
+------------------------------------------------------------
+
+Project នេះគឺជា Professional Full Stack E-commerce Architecture
+ដែលសមស្របសម្រាប់ Clothing Store និង Online Shop។
+
+Technology Stack:
+- NestJS
+- Next.js
+- Prisma
+- PostgreSQL
+- TypeScript
+- Tailwind CSS
+
+Advantages:
+- Structure ច្បាស់
+- ងាយ scale
+- ងាយ maintain
+- ល្អសម្រាប់ team development
+- Prisma ងាយគ្រប់គ្រង database
+- Next.js ល្អសម្រាប់ UI
+- NestJS ល្អសម្រាប់ API architecture
+
+======================
+END OF DOCUMENT
+======================
